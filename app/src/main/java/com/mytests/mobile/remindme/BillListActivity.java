@@ -22,6 +22,8 @@ import java.util.List;
 
 public class BillListActivity extends AppCompatActivity {
 
+    List<BillInfo> bills ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,19 +47,27 @@ public class BillListActivity extends AppCompatActivity {
 
         ListView listBills = (ListView) findViewById(R.id.list_bills) ;
 
-        List<BillInfo> bills = BillInfo.getDefaultTestBills();
+        bills = BillInfo.getDefaultTestBills();
 
         ArrayAdapter<BillInfo> adapterBills = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, bills);
 
         listBills.setAdapter(adapterBills);
         listBills.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(BillListActivity.this, BillActivity.class);
-
-                startActivity(intent);
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                onBillClicked(position);
             }
         });
+    }
+
+    private void onBillClicked(int position){
+        Intent intent = new Intent(BillListActivity.this, BillActivity.class);
+        if (bills != null && bills.size() > position){
+            Bundle bundle = new Bundle() ;
+            bundle.putSerializable("bill", bills.get(position));
+            intent.putExtras(bundle);
+        }
+        startActivity(intent);
     }
 
 

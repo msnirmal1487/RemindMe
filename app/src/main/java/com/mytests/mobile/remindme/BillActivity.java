@@ -1,9 +1,11 @@
 package com.mytests.mobile.remindme;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.mytests.mobile.remindme.model.BillInfo;
 import com.mytests.mobile.remindme.utilities.PaymentFrequency;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.List;
 
@@ -25,9 +28,12 @@ public class BillActivity extends AppCompatActivity {
     private EditText edittextBillName ;
     private EditText editTextNote ;
     private Switch switchAutoPay ;
+    private ToggleButton toggleActive;
     private Spinner spinnerFrequency ;
     private EditText edittextTentativeDate ;
     private TextView textviewHistory ;
+
+    List<PaymentFrequency> paymentFrequency ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,15 +45,50 @@ public class BillActivity extends AppCompatActivity {
         edittextBillName = (EditText) findViewById(R.id.edittext_bill_name) ;
         editTextNote = (EditText) findViewById(R.id.edittext_note) ;
         switchAutoPay = (Switch) findViewById(R.id.switch_autopay) ;
+        toggleActive = (ToggleButton) findViewById(R.id.toggle_active);
         spinnerFrequency = (Spinner) findViewById(R.id.spinner_frequency) ;
         edittextTentativeDate = (EditText) findViewById(R.id.edittext_tentative_date) ;
         textviewHistory = (TextView) findViewById(R.id.textView_history) ;
 
-        List<PaymentFrequency> paymentFrequency = PaymentFrequency.getPaymentFrequencies() ;
+        paymentFrequency = PaymentFrequency.getPaymentFrequencies() ;
 
         ArrayAdapter<PaymentFrequency> adapterPaymentFrequency = new ArrayAdapter<PaymentFrequency>(this, android.R.layout.simple_spinner_item, paymentFrequency);
         adapterPaymentFrequency.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerFrequency.setAdapter(adapterPaymentFrequency);
+
+        Intent intent = this.getIntent();
+        Bundle bundle = intent.getExtras();
+        BillInfo billInfo = (BillInfo) bundle.getSerializable("bill");
+
+        if (billInfo != null){
+            populateBillDetails(billInfo);
+        }
+    }
+
+    private void populateBillDetails(final BillInfo billInfo) {
+
+        edittextBillName.setText(billInfo.getBillName());
+        editTextNote.setText(billInfo.getNotes());
+        toggleActive.setChecked(billInfo.isActive());
+        switchAutoPay.setChecked(billInfo.isAutoPay());
+        edittextTentativeDate.setText(Integer.toString(billInfo.getTentativeDate()));
+
+
+        spinnerFrequency.post(new Runnable() {
+            @Override
+            public void run() {
+                if (paymentFrequency != null && billInfo.getPaymentFrequency() != null){
+                    for(int i = 0; i < paymentFrequency.size(); i++){
+                        if(billInfo.getPaymentFrequency().equals(paymentFrequency.get(i))){
+                            spinnerFrequency.setSelection(i);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+
+
     }
 
     @Override

@@ -17,11 +17,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
         android:ems="10"
         android:hint="Name for the bill"
         android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,50 +32,60 @@
         android:gravity="start|top"
         android:hint="Additional Notes for the bill"
         android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="@+id/edittext_bill_name"
+        app:layout_constraintEnd_toEndOf="@+id/toggle_active"
         app:layout_constraintStart_toStartOf="@+id/edittext_bill_name"
         app:layout_constraintTop_toBottomOf="@+id/edittext_bill_name" />
 
     <Switch
         android:id="@+id/switch_autopay"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:text="Autopay"
+        app:layout_constraintBottom_toBottomOf="@+id/edittext_tentative_date"
         app:layout_constraintEnd_toEndOf="@+id/edittext_note"
-        app:layout_constraintTop_toBottomOf="@+id/edittext_note" />
+        app:layout_constraintTop_toTopOf="@+id/edittext_tentative_date" />
 
     <Spinner
         android:id="@+id/spinner_frequency"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/switch_autopay"
-        app:layout_constraintEnd_toStartOf="@+id/switch_autopay"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/edittext_tentative_date"
+        app:layout_constraintEnd_toStartOf="@+id/edittext_tentative_date"
         app:layout_constraintStart_toStartOf="@+id/edittext_note"
-        app:layout_constraintTop_toBottomOf="@+id/edittext_note" />
+        app:layout_constraintTop_toTopOf="@+id/edittext_tentative_date" />
 
     <EditText
         android:id="@+id/edittext_tentative_date"
-        android:layout_width="0dp"
+        android:layout_width="76dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
         android:ems="10"
-        android:hint="Tentative Date to pay"
+        android:hint="Pay By"
         android:inputType="number"
-        app:layout_constraintEnd_toEndOf="@+id/switch_autopay"
-        app:layout_constraintStart_toStartOf="@+id/spinner_frequency"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_frequency" />
+        app:layout_constraintEnd_toStartOf="@+id/switch_autopay"
+        app:layout_constraintTop_toBottomOf="@+id/edittext_note" />
 
     <TextView
         android:id="@+id/textView_history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="History"
-        app:layout_constraintStart_toStartOf="@+id/edittext_tentative_date"
-        app:layout_constraintTop_toBottomOf="@+id/edittext_tentative_date" />
+        app:layout_constraintStart_toStartOf="@+id/spinner_frequency"
+        app:layout_constraintTop_toBottomOf="@+id/spinner_frequency" />
+
+    <ToggleButton
+        android:id="@+id/toggle_active"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:textOff="Inactive"
+        android:textOn="Active"
+        app:layout_constraintBottom_toBottomOf="@+id/edittext_bill_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/edittext_bill_name"
+        app:layout_constraintTop_toTopOf="@+id/edittext_bill_name" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

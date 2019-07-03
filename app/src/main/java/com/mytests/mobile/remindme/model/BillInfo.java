@@ -5,11 +5,12 @@ import android.widget.ListView;
 
 import com.mytests.mobile.remindme.utilities.PaymentFrequency;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BillInfo {
+public class BillInfo implements Serializable {
 
     private String billName ;
     private boolean active;
