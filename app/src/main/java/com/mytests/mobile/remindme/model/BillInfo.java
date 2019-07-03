@@ -1,25 +1,72 @@
 package com.mytests.mobile.remindme.model;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.ListView;
 
 import com.mytests.mobile.remindme.utilities.PaymentFrequency;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BillInfo implements Serializable {
+public class BillInfo implements Parcelable {
 
     private String billName ;
     private boolean active;
     private Date activeFrom ;
-
     private boolean autoPay ;
     private PaymentFrequency paymentFrequency ;
     private int tentativeDate;
     private String notes;
+
+    private BillInfo(Parcel parcel) {
+        billName = parcel.readString() ;
+        active = false ;
+        if(parcel.readInt() == 1){
+            active = true ;
+        }
+        activeFrom = new Date(parcel.readString());
+        autoPay = false;
+        if(parcel.readInt() == 1){
+            autoPay = true ;
+        }
+        paymentFrequency = PaymentFrequency.getPaymentFrequncy(parcel.readString());
+        tentativeDate = parcel.readInt() ;
+        notes = parcel.readString() ;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
+        parcel.writeString(billName);
+        parcel.writeByte((byte) (active?1:0));
+        parcel.writeString(String.valueOf(activeFrom));
+        parcel.writeByte((byte) (autoPay?1:0));
+        parcel.writeString(paymentFrequency.getFrequency());
+        parcel.writeInt(tentativeDate);
+        parcel.writeString(notes);
+    }
+
+    public final static Parcelable.Creator<BillInfo> CREATOR =
+            new Creator<BillInfo>() {
+                @Override
+                public BillInfo createFromParcel(Parcel parcel) {
+                    return new BillInfo(parcel);
+                }
+
+                @Override
+                public BillInfo[] newArray(int size) {
+                    return new BillInfo[size];
+                }
+            } ;
+
 
     public BillInfo(String billName, boolean active, Date activeFrom, boolean autoPay,
                     PaymentFrequency paymentFrequency, int tentativeDate, String notes) {

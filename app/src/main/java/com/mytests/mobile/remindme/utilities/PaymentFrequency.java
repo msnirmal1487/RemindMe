@@ -51,4 +51,15 @@ public enum PaymentFrequency {
 
         return paymentFrequencyList;
     }
+
+    public static PaymentFrequency getPaymentFrequncy(String paymentFrequencyValue){
+        if(paymentFrequencyValue != null){
+            for(PaymentFrequency paymentFrequency: PaymentFrequency.values()){
+                if(paymentFrequency.getFrequency().equalsIgnoreCase(paymentFrequencyValue)){
+                    return paymentFrequency ;
+                }
+            }
+        }
+        return null;
+    }
 }

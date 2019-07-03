@@ -22,6 +22,7 @@ import java.util.List;
 
 public class BillListActivity extends AppCompatActivity {
 
+    public static final String NOTE_INFO = "com.mytests.mobile.remindme.NOTE_INFO" ;
     List<BillInfo> bills ;
 
     @Override
@@ -35,8 +36,7 @@ public class BillListActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(new Intent(BillListActivity.this, BillActivity.class));
             }
         });
 
@@ -63,9 +63,8 @@ public class BillListActivity extends AppCompatActivity {
     private void onBillClicked(int position){
         Intent intent = new Intent(BillListActivity.this, BillActivity.class);
         if (bills != null && bills.size() > position){
-            Bundle bundle = new Bundle() ;
-            bundle.putSerializable("bill", bills.get(position));
-            intent.putExtras(bundle);
+            BillInfo billInfo = bills.get(position) ;
+            intent.putExtra(NOTE_INFO, billInfo);
         }
         startActivity(intent);
     }

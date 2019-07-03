@@ -23,6 +23,8 @@ import android.widget.ToggleButton;
 
 import java.util.List;
 
+import static com.mytests.mobile.remindme.BillListActivity.NOTE_INFO;
+
 public class BillActivity extends AppCompatActivity {
 
     private EditText edittextBillName ;
@@ -34,6 +36,8 @@ public class BillActivity extends AppCompatActivity {
     private TextView textviewHistory ;
 
     List<PaymentFrequency> paymentFrequency ;
+    private BillInfo billInfo;
+    private boolean createNewBill = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +60,21 @@ public class BillActivity extends AppCompatActivity {
         adapterPaymentFrequency.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerFrequency.setAdapter(adapterPaymentFrequency);
 
-        Intent intent = this.getIntent();
-        Bundle bundle = intent.getExtras();
-        BillInfo billInfo = (BillInfo) bundle.getSerializable("bill");
+        readBillInfo();
 
-        if (billInfo != null){
+        if (!createNewBill){
             populateBillDetails(billInfo);
+        }
+
+    }
+
+    private void readBillInfo() {
+        Intent intent = this.getIntent();
+        billInfo = intent.getParcelableExtra(NOTE_INFO);
+        if (billInfo != null){
+            createNewBill = false;
+        } else {
+            createNewBill = true ;
         }
     }
 
