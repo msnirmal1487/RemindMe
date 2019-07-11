@@ -1,21 +1,27 @@
 package com.mytests.mobile.remindme;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import com.mytests.mobile.remindme.model.BillInfo;
 import com.mytests.mobile.remindme.utilities.PaymentFrequency;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import java.util.List;
@@ -23,7 +29,7 @@ import java.util.List;
 import static com.mytests.mobile.remindme.BillListActivity.NOTE_INFO;
 import static com.mytests.mobile.remindme.BillListActivity.NOTE_INFO_INDEX;
 
-public class BillActivity extends AppCompatActivity {
+public class BillActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final int POSITION_NOT_SET = -1;
     private EditText edittextBillName ;
@@ -37,6 +43,9 @@ public class BillActivity extends AppCompatActivity {
     List<PaymentFrequency> paymentFrequency ;
     private BillInfo billInfo;
     private boolean createNewBill = true;
+    private ImageView imageCamera;
+    public static final int CAPTURE_IMAGE_ACTIVITY_RESULT = 1;
+    private ImageView imageThumbnail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +61,13 @@ public class BillActivity extends AppCompatActivity {
         spinnerFrequency = (Spinner) findViewById(R.id.spinner_frequency) ;
         edittextTentativeDate = (EditText) findViewById(R.id.edittext_tentative_date) ;
         textviewHistory = (TextView) findViewById(R.id.textView_history) ;
+        imageCamera = (ImageView) findViewById(R.id.image_camera);
+        imageThumbnail = (ImageView) findViewById(R.id.image_thumbnail);
 
         paymentFrequency = PaymentFrequency.getPaymentFrequencies() ;
+
+
+        imageCamera.setOnClickListener(this);
 
         ArrayAdapter<PaymentFrequency> adapterPaymentFrequency = new ArrayAdapter<PaymentFrequency>(this, android.R.layout.simple_spinner_item, paymentFrequency);
         adapterPaymentFrequency.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -82,6 +96,29 @@ public class BillActivity extends AppCompatActivity {
         createNewBill = true ;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_send_mail) {
+            sendMail();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void populateBillDetails(final BillInfo billInfo) {
 
         edittextBillName.setText(billInfo.getBillName());
@@ -108,25 +145,44 @@ public class BillActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    private void sendMail() {
+        String billName = edittextBillName.getText().toString();
+        String billNotes = editTextNote.getText().toString();
+        String tentaiveDate = edittextTentativeDate.getText().toString();
+
+        String subject = billName ;
+        String text = "Reminder for \"" + billName + "\", \"" + billNotes + "\", due by " + tentaiveDate;
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("message/rfc2822");
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        startActivity(intent);
+
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_send_mail) {
-            return true;
+    public void onClick(View view) {
+        if(view == imageCamera){
+            captureImage();
         }
+    }
 
-        return super.onOptionsItemSelected(item);
+    private void captureImage() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, "remindMe_bill_name");
+        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_RESULT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent result) {
+
+        if(requestCode == CAPTURE_IMAGE_ACTIVITY_RESULT && resultCode == RESULT_OK && result != null){
+            Bitmap thumbNail = result.getParcelableExtra("data");
+            if(thumbNail != null){
+                imageThumbnail.setVisibility(View.VISIBLE);
+                imageThumbnail.setImageBitmap(thumbNail);
+            }
+        }
     }
 }
