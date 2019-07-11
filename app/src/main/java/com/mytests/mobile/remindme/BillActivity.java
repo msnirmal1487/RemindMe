@@ -21,9 +21,11 @@ import android.widget.ToggleButton;
 import java.util.List;
 
 import static com.mytests.mobile.remindme.BillListActivity.NOTE_INFO;
+import static com.mytests.mobile.remindme.BillListActivity.NOTE_INFO_INDEX;
 
 public class BillActivity extends AppCompatActivity {
 
+    public static final int POSITION_NOT_SET = -1;
     private EditText edittextBillName ;
     private EditText editTextNote ;
     private Switch switchAutoPay ;
@@ -67,12 +69,17 @@ public class BillActivity extends AppCompatActivity {
 
     private void readBillInfo() {
         Intent intent = this.getIntent();
-        billInfo = intent.getParcelableExtra(NOTE_INFO);
-        if (billInfo != null){
-            createNewBill = false;
-        } else {
-            createNewBill = true ;
+        int index = intent.getIntExtra(NOTE_INFO_INDEX, POSITION_NOT_SET);
+        if (index > POSITION_NOT_SET){
+
+            List<BillInfo> bills = BillInfo.getDefaultTestBills();
+            if (bills != null && bills.size() > index){
+                billInfo = bills.get(index);
+                createNewBill = false;
+                return;
+            }
         }
+        createNewBill = true ;
     }
 
     private void populateBillDetails(final BillInfo billInfo) {

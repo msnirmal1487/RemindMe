@@ -23,6 +23,7 @@ import java.util.List;
 public class BillListActivity extends AppCompatActivity {
 
     public static final String NOTE_INFO = "com.mytests.mobile.remindme.NOTE_INFO" ;
+    public static final String NOTE_INFO_INDEX = "com.mytests.mobile.remindme.NOTE_INFO_INDEX" ;
     List<BillInfo> bills ;
 
     @Override
@@ -63,8 +64,7 @@ public class BillListActivity extends AppCompatActivity {
     private void onBillClicked(int position){
         Intent intent = new Intent(BillListActivity.this, BillActivity.class);
         if (bills != null && bills.size() > position){
-            BillInfo billInfo = bills.get(position) ;
-            intent.putExtra(NOTE_INFO, billInfo);
+            intent.putExtra(NOTE_INFO_INDEX, position);
         }
         startActivity(intent);
     }
