@@ -1,17 +1,28 @@
 package com.mytests.mobile.remindme;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.FeatureInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.mytests.mobile.remindme.model.BillInfo;
 import com.mytests.mobile.remindme.utilities.PaymentFrequency;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,14 +35,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
-import static com.mytests.mobile.remindme.BillListActivity.NOTE_INFO;
+import static android.os.Environment.getExternalStoragePublicDirectory;
 import static com.mytests.mobile.remindme.BillListActivity.NOTE_INFO_INDEX;
 
 public class BillActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = BillActivity.class.getSimpleName() ;
     public static final int POSITION_NOT_SET = -1;
+    public static final int EXTERNAL_FILE_WRITE_PERMISSION_REQUEST_CODE = 2;
     private EditText edittextBillName ;
     private EditText editTextNote ;
     private Switch switchAutoPay ;
@@ -39,6 +56,8 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
     private Spinner spinnerFrequency ;
     private EditText edittextTentativeDate ;
     private TextView textviewHistory ;
+
+    private String currentPhotopath;
 
     List<PaymentFrequency> paymentFrequency ;
     private BillInfo billInfo;
@@ -64,6 +83,12 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
         imageCamera = (ImageView) findViewById(R.id.image_camera);
         imageThumbnail = (ImageView) findViewById(R.id.image_thumbnail);
 
+        if(!isFeatureAvailable(this, PackageManager.FEATURE_CAMERA)){
+            imageCamera.setVisibility(View.GONE);
+            imageThumbnail.setVisibility(View.GONE);
+        } else {
+            imageCamera.setVisibility(View.VISIBLE);
+        }
         paymentFrequency = PaymentFrequency.getPaymentFrequencies() ;
 
 
@@ -164,14 +189,76 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if(view == imageCamera){
-            captureImage();
+            checkPermissionToSaveImage();
         }
     }
 
     private void captureImage() {
+
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, "remindMe_bill_name");
-        startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_RESULT);
+        if( intent.resolveActivity(getPackageManager()) != null){
+            File photoFile = null;
+
+            photoFile = getImageFile() ;
+
+            if (photoFile != null){
+
+                Uri photoUri = FileProvider.getUriForFile(this, "com.mytests.fileprovider", photoFile) ;
+                Log.d(TAG, "photoUri - " + photoUri) ;
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri) ;
+                grantUriPermission("com.android.camera", photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                grantUriPermission("com.android.camera", photoUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_RESULT);
+            }
+        } else {
+            Toast.makeText(this, "Android device does not have an app that can capture Images", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private File getImageFile() {
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_" + "Remind_me";
+//        File storageDir = getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) ;
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES) ; // to be used if the images should be private
+        File image = null;
+        try {
+            image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        currentPhotopath = image.getAbsolutePath() ;
+        Log.d(TAG, "current Photo Path - " + currentPhotopath) ;
+        return image ;
+
+    }
+
+    private void checkPermissionToSaveImage(){
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                Toast.makeText(this, "Permission Needed to save the file to external storage", Toast.LENGTH_SHORT).show();
+            }
+
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, EXTERNAL_FILE_WRITE_PERMISSION_REQUEST_CODE);
+        } else {
+            captureImage();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case EXTERNAL_FILE_WRITE_PERMISSION_REQUEST_CODE: {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    captureImage();
+                } else {
+                    Toast.makeText(this, "Permission Not granted to Write Image to External storage", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     @Override
@@ -184,5 +271,17 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
                 imageThumbnail.setImageBitmap(thumbNail);
             }
         }
+    }
+
+    public static boolean isFeatureAvailable(Context context, String feature){
+         FeatureInfo[] featureInfos = context.getPackageManager().getSystemAvailableFeatures();
+         if(featureInfos != null && featureInfos.length > 0){
+             for(FeatureInfo featureInfo: featureInfos){
+                 if(featureInfo.name != null && featureInfo.name.equals(feature)){
+                     return true;
+                 }
+             }
+         }
+         return false;
     }
 }
