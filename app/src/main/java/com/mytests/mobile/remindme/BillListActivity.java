@@ -115,8 +115,14 @@ public class BillListActivity extends AppCompatActivity {
 
         BillInfoList billInfoList = CacheDataManager.getInstance().readBillListCache(context);
 
-        if (billInfoList != null && billInfoList.getBills() != null){
-            bills = billInfoList.getBills();
+        if (billInfoList != null && billInfoList.getBills() != null
+                && billInfoList.getBills().size() > 0){
+            bills = new ArrayList<>() ;
+            for (BillInfo billInfo: billInfoList.getBills()){
+                if (billInfo != null) {
+                    bills.add(billInfo);
+                }
+            }
         } else {
             bills = new ArrayList<>();
         }

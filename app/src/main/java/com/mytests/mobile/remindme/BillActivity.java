@@ -48,6 +48,12 @@ import static com.mytests.mobile.remindme.BillListActivity.NOTE_INFO_INDEX;
 public class BillActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = BillActivity.class.getSimpleName() ;
+
+    public static final String ORIGINAL_BILL = "com.mytests.mobile.remindme.ORIGINAL_BILL" ;
+    public static final String EDITED_BILL = "com.mytests.mobile.remindme.EDITED_BILL" ;
+    public static final String BILL_INDEX = "com.mytests.mobile.remindme.BILL_INDEX" ;
+    public static final String IS_CREATE_NEW = "com.mytests.mobile.remindme.IS_CREATE_NEW" ;
+
     public static final int POSITION_NOT_SET = -1;
     public static final int EXTERNAL_FILE_WRITE_PERMISSION_REQUEST_CODE = 2;
     private EditText edittextBillName ;
@@ -61,15 +67,16 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
     private String currentPhotopath;
 
     List<PaymentFrequency> paymentFrequency ;
-    private BillInfo billInfo;
-    private boolean createNewBill = true;
     private ImageView imageCamera;
     public static final int CAPTURE_IMAGE_ACTIVITY_RESULT = 1;
     private ImageView imageThumbnail;
     private boolean isCancelling;
     private Context context;
+
     private int index;
     private BillInfo originalBillInfo;
+    private BillInfo billInfo;
+    private boolean createNewBill = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +113,11 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
         spinnerFrequency.setAdapter(adapterPaymentFrequency);
 
         readBillInfo();
-        saveOriginalBill();
+        if(savedInstanceState == null){
+            saveOriginalBill();
+        } else {
+            restoreOriginalBillInfo(savedInstanceState);
+        }
 
 
         if (!createNewBill){
@@ -115,18 +126,23 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private void restoreOriginalBillInfo(Bundle savedInstanceState) {
+        originalBillInfo = new BillInfo((BillInfo) savedInstanceState.getParcelable(ORIGINAL_BILL));
+    }
+
     private void saveOriginalBill() {
         if(createNewBill){
             return;
         }
 
-        originalBillInfo = new BillInfo();
-        originalBillInfo.setBillName(billInfo.getBillName());
-        originalBillInfo.setNotes(billInfo.getNotes());
-        originalBillInfo.setAutoPay(billInfo.isAutoPay());
-        originalBillInfo.setActive(billInfo.isActive());
-        originalBillInfo.setPaymentFrequency(billInfo.getPaymentFrequency());
-        originalBillInfo.setTentativeDate(billInfo.getTentativeDate());
+        originalBillInfo = new BillInfo(billInfo);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(ORIGINAL_BILL, originalBillInfo);
     }
 
     @Override
@@ -172,6 +188,7 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         billInfo = new BillInfo();
+        billInfo.setActiveFrom(new Date());
         index = CacheDataManager.getInstance().addNewBill(context);
         createNewBill = true ;
     }
