@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.mytests.mobile.remindme.model.BillInfo;
+import com.mytests.mobile.remindme.model.BillInfoList;
+import com.mytests.mobile.remindme.utilities.CacheDataManager;
 import com.mytests.mobile.remindme.utilities.PaymentFrequency;
 
 import androidx.annotation.NonNull;
@@ -41,7 +43,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static android.os.Environment.getExternalStoragePublicDirectory;
 import static com.mytests.mobile.remindme.BillListActivity.NOTE_INFO_INDEX;
 
 public class BillActivity extends AppCompatActivity implements View.OnClickListener {
@@ -65,6 +66,10 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imageCamera;
     public static final int CAPTURE_IMAGE_ACTIVITY_RESULT = 1;
     private ImageView imageThumbnail;
+    private boolean isCancelling;
+    private Context context;
+    private int index;
+    private BillInfo originalBillInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +77,8 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_bill);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        context = this ;
 
         edittextBillName = (EditText) findViewById(R.id.edittext_bill_name) ;
         editTextNote = (EditText) findViewById(R.id.edittext_note) ;
@@ -99,6 +106,8 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
         spinnerFrequency.setAdapter(adapterPaymentFrequency);
 
         readBillInfo();
+        saveOriginalBill();
+
 
         if (!createNewBill){
             populateBillDetails(billInfo);
@@ -106,25 +115,71 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private void saveOriginalBill() {
+        if(createNewBill){
+            return;
+        }
+
+        originalBillInfo = new BillInfo();
+        originalBillInfo.setBillName(billInfo.getBillName());
+        originalBillInfo.setNotes(billInfo.getNotes());
+        originalBillInfo.setAutoPay(billInfo.isAutoPay());
+        originalBillInfo.setActive(billInfo.isActive());
+        originalBillInfo.setPaymentFrequency(billInfo.getPaymentFrequency());
+        originalBillInfo.setTentativeDate(billInfo.getTentativeDate());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(isCancelling){
+            if(createNewBill){
+                CacheDataManager.getInstance().deleteBill(context, index);
+            } else{
+                Toast.makeText(this, "Discarded the changes to the bill", Toast.LENGTH_SHORT).show();
+                CacheDataManager.getInstance().updateBill(context, index, originalBillInfo);
+            }
+        } else {
+            saveBill();
+        }
+    }
+
+    private void saveBill() {
+
+        billInfo.setBillName(edittextBillName.getText().toString());
+        billInfo.setNotes(editTextNote.getText().toString());
+        billInfo.setAutoPay(switchAutoPay.isChecked());
+        billInfo.setActive(toggleActive.isChecked());
+        billInfo.setPaymentFrequency(PaymentFrequency.getPaymentFrequencies().get(spinnerFrequency.getSelectedItemPosition()));
+        billInfo.setTentativeDate(Integer.parseInt(edittextTentativeDate.getText().toString()));
+
+        CacheDataManager.getInstance().updateBill(context, index, billInfo);
+    }
+
     private void readBillInfo() {
         Intent intent = this.getIntent();
-        int index = intent.getIntExtra(NOTE_INFO_INDEX, POSITION_NOT_SET);
+        index = intent.getIntExtra(NOTE_INFO_INDEX, POSITION_NOT_SET);
+
+        BillInfoList billInfoList = CacheDataManager.getInstance().readBillListCache(context) ;
+        List<BillInfo> bills = billInfoList.getBills();
+
         if (index > POSITION_NOT_SET){
 
-            List<BillInfo> bills = BillInfo.getDefaultTestBills();
             if (bills != null && bills.size() > index){
                 billInfo = bills.get(index);
                 createNewBill = false;
                 return;
             }
         }
+        billInfo = new BillInfo();
+        index = CacheDataManager.getInstance().addNewBill(context);
         createNewBill = true ;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_bill, menu);
         return true;
     }
 
@@ -139,6 +194,9 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
         if (id == R.id.action_send_mail) {
             sendMail();
             return true;
+        } else if(id == R.id.action_cancel){
+            isCancelling = true;
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

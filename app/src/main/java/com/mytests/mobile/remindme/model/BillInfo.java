@@ -68,6 +68,9 @@ public class BillInfo implements Parcelable {
             } ;
 
 
+    public BillInfo() {
+    }
+
     public BillInfo(String billName, boolean active, Date activeFrom, boolean autoPay,
                     PaymentFrequency paymentFrequency, int tentativeDate, String notes) {
         this.billName = billName;

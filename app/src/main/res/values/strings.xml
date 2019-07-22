@@ -3,4 +3,8 @@
     <string name="action_send_mail">Send as email</string>
     <string name="title_activity_bill_list">BillListActivity</string>
     <string name="title_activity_bill">Edit Note</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_clear_bill_list_cache">Clear Bill List Cache</string>
+    <string name="action_populate_bill_list_cache">Populate/Reset Bill List Cache</string>
+    <string name="action_read_bill_list_cache">Read Bill List cache (Debug Option)</string>
 </resources>
