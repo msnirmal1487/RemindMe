@@ -9,15 +9,15 @@ import static org.junit.Assert.*;
 public class PaymentFrequencyTest {
 
     @Test
-    public void getPaymentFrequencies() {
-
-    }
-
-    @Test
     public void getPaymentFrequncy(){
-        PaymentFrequency monthlyPaymentFrequency = PaymentFrequency.getPaymentFrequncy("Monthly") ;
 
-        assertEquals(PaymentFrequency.MONTHLY, monthlyPaymentFrequency);
-        assertEquals(PaymentFrequency.BI_MONTHLY, monthlyPaymentFrequency);
+        List<PaymentFrequency> paymentFrequencyList = PaymentFrequency.getPaymentFrequencies() ;
+
+        assertNotNull(paymentFrequencyList);
+
+        for (PaymentFrequency paymentFrequency: paymentFrequencyList){
+            assertEquals(paymentFrequency, PaymentFrequency.getPaymentFrequncy(paymentFrequency.getFrequency()));
+        }
+
     }
 }
