@@ -7,6 +7,8 @@ import android.widget.ListView;
 
 import com.mytests.mobile.remindme.utilities.PaymentFrequency;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +29,14 @@ public class BillInfo implements Parcelable {
         if(parcel.readInt() == 1){
             active = true ;
         }
-        activeFrom = new Date(parcel.readString());
+        String activeFromString = parcel.readString() ;
+
+        try {
+            activeFrom = new SimpleDateFormat("yyyyMMdd_HHmmss").parse(activeFromString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            activeFrom = new Date();
+        }
         autoPay = false;
         if(parcel.readInt() == 1){
             autoPay = true ;
@@ -47,7 +56,8 @@ public class BillInfo implements Parcelable {
 
         parcel.writeString(billName);
         parcel.writeByte((byte) (active?1:0));
-        parcel.writeString(String.valueOf(activeFrom));
+        String activeFromString = new SimpleDateFormat("yyyyMMdd_HHmmss").format(activeFrom);
+        parcel.writeString(String.valueOf(activeFromString));
         parcel.writeByte((byte) (autoPay?1:0));
         parcel.writeString(paymentFrequency.getFrequency());
         parcel.writeInt(tentativeDate);
@@ -74,6 +84,7 @@ public class BillInfo implements Parcelable {
     public BillInfo(BillInfo billInfo){
         this.billName = billInfo.getBillName();
         this.active = billInfo.isActive();
+        this.activeFrom = billInfo.getActiveFrom() ;
         this.autoPay = billInfo.isAutoPay();
         this.paymentFrequency = billInfo.getPaymentFrequency();
         setTentativeDate(billInfo.getTentativeDate());
@@ -164,12 +175,20 @@ public class BillInfo implements Parcelable {
 
     public static List<BillInfo> getDefaultTestBills(){
         List<BillInfo> bills = new ArrayList<>();
-        bills.add(new BillInfo("US Internet", true,
-                new Date(2019, 4, 12),
-                true, PaymentFrequency.MONTHLY, 10, "Verizon"));
-        bills.add(new BillInfo("Chennai Telephone & Internet", true,
-                new Date(2015, 9, 1),
-                false, PaymentFrequency.MONTHLY, 15, "BSNL"));
+        try {
+            bills.add(new BillInfo("US Internet", true,
+                    new SimpleDateFormat("yyyyMMdd_HHmmss").parse("20190412_090000"),
+                    true, PaymentFrequency.MONTHLY, 10, "Verizon"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        try {
+            bills.add(new BillInfo("Chennai Telephone & Internet", true,
+                    new SimpleDateFormat("yyyyMMdd_HHmmss").parse("20150901_090000"),
+                    false, PaymentFrequency.MONTHLY, 15, "BSNL"));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         return bills ;
     }
