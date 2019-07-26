@@ -1,10 +1,6 @@
 apply plugin: 'com.android.application'
 
-
-// API 'variantOutput.getPackageApplication()' is obsolete and has been replaced with 'variant.getPackageApplicationProvider()'.
-//        It will be removed at the end of 2019.
-// Getting above warning, to be commented for regular development, Uncomment to run through Gradle.
-//apply plugin: 'spoon'
+apply plugin: 'spoon'
 // run "gradlew tasks" to confirm the spoon task "spoonDebugAndroidTest" is available
 //run "gradlew spoonDebugAndroidTest" to get the Spoon report HTML in Project folder.
 
@@ -25,10 +21,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    spoon{
+        debug = true
+
+        className = 'com.mytests.mobile.remindme.NoteCreationTest'
+
+        methodName = 'createNewNote'
+
+        sequential = true
+
+        grantAllPermissions = true
+    }
 }
 
 dependencies {
-    api fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.0.0'
@@ -40,5 +47,8 @@ dependencies {
 
     // https://medium.com/android-bits/running-espresso-tests-on-multiple-devices-with-spoon-842a5546e3d7
     implementation 'com.squareup.spoon:spoon-client:1.7.1'
+
+    androidTestImplementation 'com.jraska:falcon:1.0.4'
+    androidTestImplementation 'com.jraska:falcon-spoon-compat:1.0.4'
 
 }

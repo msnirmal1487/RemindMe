@@ -12,7 +12,6 @@ import com.mytests.mobile.remindme.model.BillInfo;
 import com.mytests.mobile.remindme.model.BillInfoList;
 import com.mytests.mobile.remindme.utilities.CacheDataManager;
 import com.mytests.mobile.remindme.utilities.PaymentFrequency;
-import com.squareup.spoon.Spoon;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,11 +49,11 @@ public class NoteCreationTest {
         // Round about way of doing "onView(withId(R.id.fab)).perform(click());"
 //        ViewInteraction fabNewBill = onView(withId(R.id.fab)) ;
 //        fabNewBill.perform(click());
-        Spoon.screenshot(activity, "App_Launch_Bill_List_Shown") ;
+        TakeScreenshot.takeScreenshot(activity, "App_Launch_Bill_List_Shown"); ;
 
         onView(withId(R.id.fab)).perform(click());
 
-        Spoon.screenshot(activity, "Bill_Shown") ;
+        TakeScreenshot.takeScreenshot(activity, "Bill_Shown") ;
 
         String testBillName = "Test Bill Name";
         String testBillNote = "Test Bill Note";
@@ -76,10 +75,10 @@ public class NoteCreationTest {
         onView(withId(R.id.spinner_frequency))
                 .check(matches(withSpinnerText(containsString(testPaymentFrequency.getFrequency()))));
 
-        Spoon.screenshot(activity, "All_Bill_Details_Entered") ;
+        TakeScreenshot.takeScreenshot(activity, "All_Bill_Details_Entered") ;
         pressBack();
 
-        Spoon.screenshot(activity, "Back_Pressed") ;
+        TakeScreenshot.takeScreenshot(activity, "Back_Pressed") ;
 
         BillInfoList billInfoList = CacheDataManager.getInstance().readBillListCache(activity);
 
@@ -94,7 +93,8 @@ public class NoteCreationTest {
 
         assertNotNull(billInfoList);
 
-        Spoon.screenshot(activity, "Application_Complete") ;
+        TakeScreenshot.takeScreenshot(activity, "Application_Complete") ;
     }
+
 
 }
