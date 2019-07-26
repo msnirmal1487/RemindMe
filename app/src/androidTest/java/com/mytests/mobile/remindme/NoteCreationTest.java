@@ -3,27 +3,20 @@ package com.mytests.mobile.remindme;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 
-import androidx.core.app.ActivityCompat;
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.rule.GrantPermissionRule;
 import androidx.test.runner.AndroidJUnit4;
 
-import com.jraska.falcon.Falcon;
 import com.mytests.mobile.remindme.model.BillInfo;
 import com.mytests.mobile.remindme.model.BillInfoList;
 import com.mytests.mobile.remindme.utilities.CacheDataManager;
 import com.mytests.mobile.remindme.utilities.PaymentFrequency;
 import com.squareup.spoon.Spoon;
-//import com.squareup.spoon.Spoon;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static androidx.test.espresso.Espresso.* ;
@@ -48,22 +41,16 @@ public class NoteCreationTest {
     public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE);
 
-//    @Rule
-//    public final FalconSpoonRule falconSpoonRule = new FalconSpoonRule();
-
     @Test
     public void createNewNote(){
 
         PaymentFrequency paymentFrequency = PaymentFrequency.MONTHLY ;
         Activity activity = billListActivityActivityTestRule.getActivity() ;
 
-//        FalconSpoonRule falconSpoonRule = new FalconSpoonRule();
-
         // Round about way of doing "onView(withId(R.id.fab)).perform(click());"
 //        ViewInteraction fabNewBill = onView(withId(R.id.fab)) ;
 //        fabNewBill.perform(click());
         Spoon.screenshot(activity, "App_Launch_Bill_List_Shown") ;
-//        falconSpoonRule.screenshot(activity, "App_Launch_Bill_List_Shown"); ;
 
         onView(withId(R.id.fab)).perform(click());
 
