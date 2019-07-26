@@ -7,12 +7,12 @@ public enum PaymentFrequency {
 
 
     DIALY("Daily", 1, false),
-    WEEKLY("Weekly",7, false),
-    MONTHLY("Monthly", 1,true),
-    BI_MONTHLY("Bi-Monthly", 2,true),
-    QUATERELY("Quarterly", 3,true),
-    HALF_YEARLY("Half-yearly", 6,true),
-    YEARLY("Yearly", 12,true) ;
+    WEEKLY("Every Week",7, false),
+    MONTHLY("Every Month", 1,true),
+    BI_MONTHLY("Every 2 Months", 2,true),
+    QUATERELY("Every 3 Months", 3,true),
+    HALF_YEARLY("Every 6 Months", 6,true),
+    YEARLY("Every Year", 12,true) ;
 
     private String frequency;
     private int interval;

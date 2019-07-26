@@ -24,6 +24,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ToggleButton
+        android:id="@+id/toggle_active"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:textOff="Inactive"
+        android:textOn="Active"
+        app:layout_constraintBottom_toBottomOf="@+id/edittext_bill_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/edittext_bill_name" />
+
     <EditText
         android:id="@+id/edittext_note"
         android:layout_width="0dp"
@@ -38,36 +49,74 @@
         app:layout_constraintStart_toStartOf="@+id/edittext_bill_name"
         app:layout_constraintTop_toBottomOf="@+id/edittext_bill_name" />
 
-    <Switch
-        android:id="@+id/switch_autopay"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:text="Autopay"
-        app:layout_constraintBottom_toBottomOf="@+id/edittext_tentative_date"
-        app:layout_constraintEnd_toEndOf="@+id/edittext_note"
-        app:layout_constraintTop_toTopOf="@+id/edittext_tentative_date" />
 
-    <Spinner
-        android:id="@+id/spinner_frequency"
+    <LinearLayout
+        android:id="@+id/payment_frequency_layout"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/edittext_tentative_date"
-        app:layout_constraintEnd_toStartOf="@+id/edittext_tentative_date"
-        app:layout_constraintStart_toStartOf="@+id/edittext_note"
-        app:layout_constraintTop_toTopOf="@+id/edittext_tentative_date" />
-
-    <EditText
-        android:id="@+id/edittext_tentative_date"
-        android:layout_width="76dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:hint="Pay By"
-        android:inputType="number"
-        app:layout_constraintEnd_toStartOf="@+id/switch_autopay"
-        app:layout_constraintTop_toBottomOf="@+id/edittext_note" />
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="@+id/edittext_note"
+        app:layout_constraintStart_toStartOf="@+id/edittext_note"
+        app:layout_constraintTop_toBottomOf="@+id/edittext_note">
+
+        <TextView
+            android:id="@+id/pay_by_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center|left"
+            android:text="Pay By "
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/edittext_tentative_date"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:inputType="number"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/tentative_date_default"
+            android:textSize="15sp" />
+
+        <Spinner
+            android:id="@+id/spinner_frequency"
+            android:layout_width="170dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginEnd="8dp" />
+
+        <Switch
+            android:id="@+id/switch_autopay"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|right"
+            android:minWidth="30dp"
+            android:text="Autopay" />
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/image_camera"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_camera"
+        app:layout_constraintStart_toStartOf="@+id/payment_frequency_layout"
+        app:layout_constraintTop_toBottomOf="@+id/payment_frequency_layout" />
+
+    <ImageView
+        android:id="@+id/image_thumbnail"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/image_camera"
+        app:layout_constraintTop_toBottomOf="@+id/payment_frequency_layout" />
 
     <TextView
         android:id="@+id/textView_history"
@@ -77,32 +126,5 @@
         android:text="History"
         app:layout_constraintStart_toStartOf="@+id/image_camera"
         app:layout_constraintTop_toBottomOf="@+id/image_camera" />
-
-    <ToggleButton
-        android:id="@+id/toggle_active"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:textOff="Inactive"
-        android:textOn="Active"
-        app:layout_constraintBottom_toBottomOf="@+id/edittext_bill_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/edittext_bill_name" />
-
-    <ImageView
-        android:id="@+id/image_camera"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:layout_constraintStart_toStartOf="@+id/spinner_frequency"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_frequency"
-        android:src="@drawable/ic_camera" />
-
-    <ImageView
-        android:id="@+id/image_thumbnail"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:layout_constraintStart_toEndOf="@+id/image_camera"
-        app:layout_constraintTop_toBottomOf="@+id/spinner_frequency"
-        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
