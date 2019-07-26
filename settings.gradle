@@ -1,1 +1,1 @@
-include ':app'
+include ':app', ':spoon-client-2.0.0-20180803.163834-48'

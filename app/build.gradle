@@ -1,5 +1,10 @@
 apply plugin: 'com.android.application'
 
+// Getting a warning
+apply plugin: 'spoon'
+// run "gradlew tasks" to confirm the spoon task "spoonDebugAndroidTest" is available
+//run "gradlew spoonDebugAndroidTest" to get the Spoon report HTML in Project folder.
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.0"
@@ -20,7 +25,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.0.0'
@@ -29,6 +34,13 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    androidTestimplementation 'com.squareup.spoon:spoon-client:1.7.1'
-
+    androidTestImplementation 'com.jraska:falcon:2.1.1'
+    // https://medium.com/android-bits/running-espresso-tests-on-multiple-devices-with-spoon-842a5546e3d7
+    implementation 'com.squareup.spoon:spoon-client:1.7.1'
+    // There are some issues with Spoon screenshots. It can’t take Dialog’s screenshots.
+    // Falcon will help you to take screenshots with Falcon’s bright eyes.
+    // falcon-spoon-compat takes better screenshots.
+    //    implementation 'com.jraska:falcon:2.1.0'
+//    androidTestImplementation 'com.jraska:falcon-spoon-compat:2.1.0'
+//    implementation files('libs/spoon-client-2.0.0-20180803.163834-48-sources.jar')
 }
