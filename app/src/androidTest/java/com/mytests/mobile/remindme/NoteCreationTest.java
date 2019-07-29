@@ -41,7 +41,7 @@ public class NoteCreationTest {
             Manifest.permission.READ_EXTERNAL_STORAGE);
 
     @Test
-    public void createNewNote(){
+    public void testCreateNewNote(){
 
         PaymentFrequency paymentFrequency = PaymentFrequency.MONTHLY ;
         Activity activity = billListActivityActivityTestRule.getActivity() ;

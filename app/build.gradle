@@ -26,7 +26,7 @@ android {
 
         className = 'com.mytests.mobile.remindme.NoteCreationTest'
 
-        methodName = 'createNewNote'
+        methodName = 'testCreateNewNote'
 
         sequential = true
 

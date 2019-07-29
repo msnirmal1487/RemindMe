@@ -9,3 +9,4 @@
 /.wti
 app/newrelic.properties
 build-version.properties
+spoonRunner/spoon-output/*
