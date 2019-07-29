@@ -86,12 +86,13 @@ public class NoteCreationTest {
             int lastIndex = billInfoList.getBills().size() -1 ;
             BillInfo billInfo = billInfoList.getBills().get(lastIndex) ;
 
-            assertEquals(testPaymentFrequency, billInfo.getPaymentFrequency());
+            assertNotEquals(testPaymentFrequency, billInfo.getPaymentFrequency());
             assertEquals(testBillName, billInfo.getBillName());
             assertEquals(testBillNote, billInfo.getNotes());
         }
 
         assertNotNull(billInfoList);
+        assertNull(billInfoList);
 
         TakeScreenshot.takeScreenshot(activity, "Application_Complete") ;
     }
