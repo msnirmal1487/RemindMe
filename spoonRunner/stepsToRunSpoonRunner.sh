@@ -1,13 +1,13 @@
 #!/usr/bin/env sh
 pwd
-cd /Users/subni001/Nirmal/android/RemindMe
+cd ~/Nirmal/android/RemindMe
 pwd
 spoonRunner/reporting/sendMessageInSubject.sh "Spoon Runner Starting"
 rm -rf spoonRunner/spoon-output/*
 device_to_connect="10.1.73.80:5555"
 device_connected_message="connected to"
-/Users/subni001/Library/Android/sdk/platform-tools/adb disconnect
-devices=`/Users/subni001/Library/Android/sdk/platform-tools/adb connect $device_to_connect`
+~/Library/Android/sdk/platform-tools/adb disconnect
+devices=`~/Library/Android/sdk/platform-tools/adb connect $device_to_connect`
 devices=$device_connected_message$device_to_connect
 if [[ $devices == *$device_connected_message* && $devices == *$device_to_connect* ]]; then
     echo "Device connected"
@@ -17,11 +17,11 @@ if [[ $devices == *$device_connected_message* && $devices == *$device_to_connect
     ./gradlew assemble
     ./gradlew assembleAndroidTest
     cd spoonRunner
-    java -jar spoon-runner-1.1.1-jar-with-dependencies.jar --apk ../app/build/outputs/apk/debug/app-debug.apk --test-apk ../app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk --sdk /Users/subni001/Library/Android/sdk
+    java -jar spoon-runner-1.1.1-jar-with-dependencies.jar --apk ../app/build/outputs/apk/debug/app-debug.apk --test-apk ../app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk --sdk ~/Library/Android/sdk
     FILE=spoon-output/result.json
     if test -f "$FILE"; then
         echo "Parsing result.json"
-        /usr/local/bin/node /Users/subni001/Nirmal/android/RemindMe/spoonRunner/reporting/parseResultJson.js
+        /usr/local/bin/node ~/Nirmal/android/RemindMe/spoonRunner/reporting/parseResultJson.js
     else
         echo "result.json missing"
         reporting/sendMessageInSubject.sh "Something Went Wrong!! Spoon-runner Test Not successful."
