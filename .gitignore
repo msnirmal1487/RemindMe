@@ -10,3 +10,4 @@
 app/newrelic.properties
 build-version.properties
 spoonRunner/spoon-output/*
+spoonRunner/reporting/node_modules/*
