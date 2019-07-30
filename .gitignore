@@ -11,3 +11,4 @@ app/newrelic.properties
 build-version.properties
 spoonRunner/spoon-output/*
 spoonRunner/reporting/node_modules/*
+spoonRunner/reporting/logs/app.log
