@@ -24,9 +24,9 @@ android {
     spoon{
         debug = true
 
-        className = 'com.mytests.mobile.remindme.NoteCreationTest'
+        className = 'com.mytests.mobile.remindme.BillCreationTest'
 
-        methodName = 'testCreateNewNote'
+        methodName = 'testCreateNewBill'
 
         sequential = true
 

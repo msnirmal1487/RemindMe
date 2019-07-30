@@ -3,7 +3,7 @@ log4js.configure({
   appenders: [
     { type: 'console' },
     { type: 'file',
-      filename: 'logs/app.log',
+      filename: '/Users/subni001/Nirmal/android/RemindMe/spoonRunner/reporting/logs/app.log',
       //category: 'KioskMonitoring',
       maxLogSize : 1000000,
       backups: 10 }

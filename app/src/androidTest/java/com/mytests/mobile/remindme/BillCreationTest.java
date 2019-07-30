@@ -28,7 +28,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.*;
 
 
 @RunWith(AndroidJUnit4.class)
-public class NoteCreationTest {
+public class BillCreationTest {
 
 
 
@@ -41,7 +41,7 @@ public class NoteCreationTest {
             Manifest.permission.READ_EXTERNAL_STORAGE);
 
     @Test
-    public void testCreateNewNote(){
+    public void testCreateNewBill(){
 
         PaymentFrequency paymentFrequency = PaymentFrequency.MONTHLY ;
         Activity activity = billListActivityActivityTestRule.getActivity() ;
