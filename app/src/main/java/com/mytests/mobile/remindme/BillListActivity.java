@@ -12,6 +12,8 @@ import com.mytests.mobile.remindme.utilities.CacheDataManager;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,8 +33,8 @@ public class BillListActivity extends AppCompatActivity {
 
     private List<BillInfo> bills ;
     private Context context;
-    private ArrayAdapter<BillInfo> adapterBills;
-    private ListView listBills;
+//    private ArrayAdapter<BillInfo> adapterBills;
+    private RecyclerView listBills;
 
 
     @Override
@@ -103,34 +105,36 @@ public class BillListActivity extends AppCompatActivity {
 
     private void initializeDisplayContent() {
 
-        listBills = (ListView) findViewById(R.id.list_bills);
+        listBills = (RecyclerView) findViewById(R.id.list_bills);
+        final LinearLayoutManager billsLayoutManager = new LinearLayoutManager(this);
+        listBills.setLayoutManager(billsLayoutManager);
         loadBillList();
-        listBills.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                onBillClicked(position);
-            }
-        });
+//        listBills.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+//                onBillClicked(position);
+//            }
+//        });
     }
 
     private void loadBillList() {
 
-        BillInfoList billInfoList = CacheDataManager.getInstance().readBillListCache(context);
-
-        if (billInfoList != null && billInfoList.getBills() != null
-                && billInfoList.getBills().size() > 0){
-            bills = new ArrayList<>() ;
-            for (BillInfo billInfo: billInfoList.getBills()){
-                if (billInfo != null) {
-                    bills.add(billInfo);
-                }
-            }
-        } else {
-            bills = new ArrayList<>();
-        }
-        adapterBills = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, bills);
-
-        listBills.setAdapter(adapterBills);
+//        BillInfoList billInfoList = CacheDataManager.getInstance().readBillListCache(context);
+//
+//        if (billInfoList != null && billInfoList.getBills() != null
+//                && billInfoList.getBills().size() > 0){
+//            bills = new ArrayList<>() ;
+//            for (BillInfo billInfo: billInfoList.getBills()){
+//                if (billInfo != null) {
+//                    bills.add(billInfo);
+//                }
+//            }
+//        } else {
+//            bills = new ArrayList<>();
+//        }
+//        adapterBills = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, bills);
+//
+//        listBills.setAdapter(adapterBills);
 
     }
 
