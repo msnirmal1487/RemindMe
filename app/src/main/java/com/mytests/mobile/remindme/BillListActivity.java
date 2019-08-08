@@ -35,6 +35,7 @@ public class BillListActivity extends AppCompatActivity {
     private Context context;
 //    private ArrayAdapter<BillInfo> adapterBills;
     private RecyclerView listBills;
+    private BillListRecyclerAdapter billListRecyclerAdapter;
 
 
     @Override
@@ -119,22 +120,21 @@ public class BillListActivity extends AppCompatActivity {
 
     private void loadBillList() {
 
-//        BillInfoList billInfoList = CacheDataManager.getInstance().readBillListCache(context);
-//
-//        if (billInfoList != null && billInfoList.getBills() != null
-//                && billInfoList.getBills().size() > 0){
-//            bills = new ArrayList<>() ;
-//            for (BillInfo billInfo: billInfoList.getBills()){
-//                if (billInfo != null) {
-//                    bills.add(billInfo);
-//                }
-//            }
-//        } else {
-//            bills = new ArrayList<>();
-//        }
-//        adapterBills = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, bills);
-//
-//        listBills.setAdapter(adapterBills);
+        BillInfoList billInfoList = CacheDataManager.getInstance().readBillListCache(context);
+
+        if (billInfoList != null && billInfoList.getBills() != null
+                && billInfoList.getBills().size() > 0){
+            bills = new ArrayList<>() ;
+            for (BillInfo billInfo: billInfoList.getBills()){
+                if (billInfo != null) {
+                    bills.add(billInfo);
+                }
+            }
+        } else {
+            bills = new ArrayList<>();
+        }
+        billListRecyclerAdapter = new BillListRecyclerAdapter(this, bills);
+        listBills.setAdapter(billListRecyclerAdapter);
 
     }
 

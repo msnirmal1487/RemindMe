@@ -214,9 +214,35 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
         } else if(id == R.id.action_cancel){
             isCancelling = true;
             finish();
+        } else if (id == R.id.action_next){
+            moveNext();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        MenuItem item = menu.findItem(R.id.action_next) ;
+        int lastBillIndex = CacheDataManager.getInstance().readBillListCache(context).getBills().size() - 1 ;
+        item.setEnabled(index < lastBillIndex) ;
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void moveNext() {
+        saveBill();
+        ++index ;
+        BillInfoList billInfoList = CacheDataManager.getInstance().readBillListCache(this) ;
+        if (billInfoList != null && billInfoList.getBills() != null && billInfoList.getBills().size() > index){
+            billInfo = billInfoList.getBills().get(index) ;
+            saveOriginalBill();
+            populateBillDetails(billInfo);
+        } else {
+            --index ;
+            Toast.makeText(this, "End of Bills Reached", Toast.LENGTH_SHORT).show();
+        }
+        invalidateOptionsMenu();
     }
 
     private void populateBillDetails(final BillInfo billInfo) {

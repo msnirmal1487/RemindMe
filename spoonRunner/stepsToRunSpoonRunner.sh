@@ -8,7 +8,6 @@ device_to_connect="10.1.73.80:5555"
 device_connected_message="connected to"
 ~/Library/Android/sdk/platform-tools/adb disconnect
 devices=`~/Library/Android/sdk/platform-tools/adb connect $device_to_connect`
-devices=$device_connected_message$device_to_connect
 if [[ $devices == *$device_connected_message* && $devices == *$device_to_connect* ]]; then
     echo "Device connected"
     echo $devices

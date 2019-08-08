@@ -8,4 +8,21 @@
     <string name="action_populate_bill_list_cache">Populate/Reset Bill List Cache</string>
     <string name="action_read_bill_list_cache">Read Bill List cache (Debug Option)</string>
     <string name="tentative_date_default">1</string>
+    <string name="action_next">next</string>
+    <string name="title_activity_main">Remind Me</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="menu_payments">Payments</string>
+    <string name="menu_bills">Bills</string>
 </resources>
