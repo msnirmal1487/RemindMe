@@ -26,7 +26,6 @@
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Additional Notes"
-        android:inputType="date|textUri|textShortMessage|textLongMessage|textAutoCorrect|numberSigned|textVisiblePassword|textWebEditText|textMultiLine|textNoSuggestions|textFilter|number|datetime|textWebEmailAddress|textPersonName|text|textPhonetic|textCapSentences|textPassword|textAutoComplete|textImeMultiLine|textPostalAddress|numberDecimal|textEmailAddress|numberPassword|textCapWords|phone|textEmailSubject|textCapCharacters|time|textWebPassword"
         app:layout_constraintEnd_toEndOf="@+id/linearLayout"
         app:layout_constraintStart_toStartOf="@+id/linearLayout"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
@@ -42,7 +41,7 @@
         app:layout_constraintStart_toStartOf="@+id/spinner_bill"
         app:layout_constraintTop_toBottomOf="@+id/spinner_bill">
 
-        <EditText
+        <TextView
             android:id="@+id/txt_paid_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
