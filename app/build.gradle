@@ -21,12 +21,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+//    spoon {
+//        debug = true
+//
+//        className = 'com.mytests.mobile.remindme.BillCreationTest'
+//
+//        methodName = 'testCreateNewBill'
+//
+//        sequential = true
+//
+//        grantAllPermissions = true
+//    }
+
     spoon {
         debug = true
 
-        className = 'com.mytests.mobile.remindme.BillCreationTest'
+        className = 'com.mytests.mobile.remindme.NextThroughBillsTest'
 
-        methodName = 'testCreateNewBill'
+        methodName = 'testNextThroughBills'
 
         sequential = true
 
@@ -46,6 +58,7 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0'
 
     // https://medium.com/android-bits/running-espresso-tests-on-multiple-devices-with-spoon-842a5546e3d7
     implementation 'com.squareup.spoon:spoon-client:1.7.1'
