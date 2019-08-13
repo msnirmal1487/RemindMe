@@ -4,14 +4,14 @@ import java.util.List;
 
 public class PaymentInfoList {
 
-    private List<PaymentInfo> bills;
+    private List<PaymentInfo> payments;
 
-    public List<PaymentInfo> getBills() {
-        return bills;
+    public List<PaymentInfo> getPayments() {
+        return payments;
     }
 
-    public void setBills(List<PaymentInfo> bills) {
-        this.bills = bills;
+    public void setPayments(List<PaymentInfo> payments) {
+        this.payments = payments;
     }
 
 

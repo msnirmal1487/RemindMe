@@ -18,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.mytests.mobile.remindme.model.BillInfo;
 import com.mytests.mobile.remindme.model.BillInfoList;
 import com.mytests.mobile.remindme.model.PaymentInfo;
+import com.mytests.mobile.remindme.model.PaymentInfoList;
 import com.mytests.mobile.remindme.utilities.CacheDataManager;
 
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -36,6 +37,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String PAYMENT_LIST = "PAYMENT_LIST";
+    public static final String BILLS_LIST = "BILLS_LIST";
+    public static final String INVALID = "INVALID";
     private List<BillInfo> bills ;
     private Context context;
     private RecyclerView listBills;
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity
     private List<PaymentInfo> paymentInfos;
     private PaymentListRecyclerAdapter paymentListRecyclerAdapter;
     private LinearLayoutManager paymentsLayoutManager;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +61,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, BillActivity.class));
+                onFabClicked();
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -82,7 +87,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -92,13 +97,63 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if(id == R.id.action_populate_bill_list_cache){
+            populateBillListCache();
             return true;
+        } else if (id == R.id.action_clear_bill_list_cache){
+            clearBillListCache();
+            return true ;
+        } else if (id == R.id.action_read_bill_list_cache){
+            readBillListCache();
+            return true ;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void readBillListCache() {
+
+        String currentScreen = getCurrentVisibleScreen();
+
+        if(PAYMENT_LIST.equalsIgnoreCase(currentScreen)){
+            CacheDataManager.getInstance().readPaymentListCache(context);
+            loadPaymentList();
+            displayPaymentList();
+        } else if (BILLS_LIST.equalsIgnoreCase(currentScreen)){
+            CacheDataManager.getInstance().readBillListCache(context);
+            loadBillList();
+            displayBillList();
+        }
+    }
+
+    private void clearBillListCache() {
+
+        String currentScreen = getCurrentVisibleScreen();
+
+        if(PAYMENT_LIST.equalsIgnoreCase(currentScreen)){
+            CacheDataManager.getInstance().clearPaymentListCache(context);
+            loadPaymentList();
+            displayPaymentList();
+        } else if (BILLS_LIST.equalsIgnoreCase(currentScreen)){
+            CacheDataManager.getInstance().clearBillListCache(context);
+            loadBillList();
+            displayBillList();
+        }
+    }
+
+    private void populateBillListCache() {
+
+        String currentScreen = getCurrentVisibleScreen();
+
+        if(PAYMENT_LIST.equalsIgnoreCase(currentScreen)){
+            CacheDataManager.getInstance().populatePaymentListCache(context);
+            loadPaymentList();
+            displayPaymentList();
+        } else if (BILLS_LIST.equalsIgnoreCase(currentScreen)){
+            CacheDataManager.getInstance().populateBillListCache(context);
+            loadBillList();
+            displayBillList();
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -108,8 +163,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_payments) {
+            loadPaymentList();
             displayPaymentList();
         } else if (id == R.id.nav_bills) {
+            loadBillList();
             displayBillList();
         } else if (id == R.id.nav_share) {
             handleSelection("Share");
@@ -131,12 +188,8 @@ public class MainActivity extends AppCompatActivity
         paymentsLayoutManager = new LinearLayoutManager(this);
         billsLayoutManager = new GridLayoutManager(this, 2);
 
-        loadBilList();
-        billListRecyclerAdapter = new BillListRecyclerAdapter(this, bills);
-
+        loadBillList();
         loadPaymentList();
-        paymentListRecyclerAdapter = new PaymentListRecyclerAdapter(this, paymentInfos);
-
         displayPaymentList();
     }
 
@@ -144,27 +197,53 @@ public class MainActivity extends AppCompatActivity
 
         listBills.setLayoutManager(billsLayoutManager);
         listBills.setAdapter(billListRecyclerAdapter);
-
+        billListRecyclerAdapter.notifyDataSetChanged();
         selectNavigationMenuItem(R.id.nav_bills);
 
-    }
-
-    private void selectNavigationMenuItem(int id) {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        Menu menu = navigationView.getMenu();
-        menu.findItem(id).setChecked(true);
     }
 
     private void displayPaymentList() {
 
         listBills.setLayoutManager(paymentsLayoutManager);
         listBills.setAdapter(paymentListRecyclerAdapter);
-
+        paymentListRecyclerAdapter.notifyDataSetChanged();
         selectNavigationMenuItem(R.id.nav_payments);
 
     }
 
-    private void loadBilList() {
+    private void selectNavigationMenuItem(int id) {
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Menu menu = navigationView.getMenu();
+        menu.findItem(id).setChecked(true);
+    }
+
+    private void onFabClicked() {
+
+        String currentScreen = getCurrentVisibleScreen();
+
+        if(PAYMENT_LIST.equalsIgnoreCase(currentScreen)){
+            startActivity(new Intent(MainActivity.this, PaymentActivity.class));
+        } else if (BILLS_LIST.equalsIgnoreCase(currentScreen)){
+            startActivity(new Intent(MainActivity.this, BillActivity.class));
+        }
+    }
+
+    private String getCurrentVisibleScreen() {
+        if(navigationView == null){
+            navigationView = (NavigationView) findViewById(R.id.nav_view);
+        }
+        if (navigationView != null){
+            Menu menu = navigationView.getMenu();
+            if (menu.findItem(R.id.nav_payments).isChecked()){
+                return PAYMENT_LIST;
+            } else if (menu.findItem(R.id.nav_bills).isChecked()){
+                return BILLS_LIST;
+            }
+        }
+        return INVALID;
+    }
+
+    private void loadBillList() {
         BillInfoList billInfoList = CacheDataManager.getInstance().readBillListCache(context);
 
         if (billInfoList != null && billInfoList.getBills() != null
@@ -178,17 +257,38 @@ public class MainActivity extends AppCompatActivity
         } else {
             bills = new ArrayList<>();
         }
+        billListRecyclerAdapter = new BillListRecyclerAdapter(this, bills);
     }
 
     private void loadPaymentList() {
 
-        paymentInfos = PaymentInfo.getDefaultTestPayments();
-
+        PaymentInfoList paymentInfoList = CacheDataManager.getInstance().readPaymentListCache(this);
+        if (paymentInfoList != null && paymentInfoList.getPayments() != null
+                && paymentInfoList.getPayments().size() > 0){
+            paymentInfos = new ArrayList<>();
+            for(PaymentInfo paymentInfo : paymentInfoList.getPayments()){
+                if(paymentInfo != null){
+                    paymentInfos.add(paymentInfo);
+                }
+            }
+        } else {
+            paymentInfos = new ArrayList<>() ;
+        }
+        paymentListRecyclerAdapter = new PaymentListRecyclerAdapter(this, paymentInfos);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        displayBillList();
+
+        String currentScreen = getCurrentVisibleScreen();
+
+        if(PAYMENT_LIST.equalsIgnoreCase(currentScreen)){
+            loadPaymentList();
+            displayPaymentList();
+        } else if (BILLS_LIST.equalsIgnoreCase(currentScreen)){
+            loadBillList();
+            displayBillList();
+        }
     }
 }

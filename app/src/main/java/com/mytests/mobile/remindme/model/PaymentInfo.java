@@ -1,5 +1,8 @@
 package com.mytests.mobile.remindme.model;
 
+import android.content.Context;
+
+import com.mytests.mobile.remindme.utilities.CacheDataManager;
 import com.mytests.mobile.remindme.utilities.PaymentFrequency;
 
 import java.text.ParseException;
@@ -10,18 +13,17 @@ import java.util.List;
 
 public class PaymentInfo {
 
-    private BillInfo billInfo ;
+    private int billInfoIndex;
     private boolean paid;
     private Date paidDate ;
     private float billAmount ;
 
-
-    public BillInfo getBillInfo() {
-        return billInfo;
+    public int getBillInfoIndex() {
+        return billInfoIndex;
     }
 
-    public void setBillInfo(BillInfo billInfo) {
-        this.billInfo = billInfo;
+    public void setBillInfoIndex(int billInfoIndex) {
+        this.billInfoIndex = billInfoIndex;
     }
 
     public boolean isPaid() {
@@ -48,26 +50,30 @@ public class PaymentInfo {
         this.billAmount = billAmount;
     }
 
-    public PaymentInfo(BillInfo billInfo, boolean paid) {
-        this.billInfo = billInfo;
+    public PaymentInfo(int billInfoIndex, boolean paid) {
+        this.billInfoIndex = billInfoIndex;
         this.paid = paid;
     }
 
-    public static List<PaymentInfo> getDefaultTestPayments(){
-        List<PaymentInfo> payments = new ArrayList<>();
-        try {
-            payments.add(new PaymentInfo(new BillInfo("US Internet", true,
-                    new SimpleDateFormat("yyyyMMdd_HHmmss").parse("20190412_090000"),
-                    true, PaymentFrequency.MONTHLY, 10, "Verizon"), false));
-        } catch (ParseException e) {
-            e.printStackTrace();
+    public PaymentInfo() {
+    }
+
+    public static List<PaymentInfo> getDefaultTestPayments(Context context){
+
+        BillInfoList billInfoList = CacheDataManager.getInstance().readBillListCache(context) ;
+        if (billInfoList == null
+                || (billInfoList != null && billInfoList.getBills() == null)
+                || (billInfoList != null && billInfoList.getBills() != null
+                    && billInfoList.getBills().size() < 1)) {
+            return null ;
         }
-        try {
-            payments.add(new PaymentInfo(new BillInfo("Chennai Telephone & Internet", true,
-                    new SimpleDateFormat("yyyyMMdd_HHmmss").parse("20150901_090000"),
-                    false, PaymentFrequency.MONTHLY, 15, "BSNL"), true));
-        } catch (ParseException e) {
-            e.printStackTrace();
+
+        List<PaymentInfo> payments = new ArrayList<>();
+        payments.add(new PaymentInfo(0, false));
+
+        if (billInfoList != null && billInfoList.getBills() != null
+                && billInfoList.getBills().size() > 1){
+            payments.add(new PaymentInfo(1, false));
         }
 
         return payments ;

@@ -1,7 +1,6 @@
 package com.mytests.mobile.remindme;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.mytests.mobile.remindme.model.BillInfo;
 import com.mytests.mobile.remindme.model.PaymentInfo;
 
 import java.util.List;
-
-import static com.mytests.mobile.remindme.BillListActivity.NOTE_INFO_INDEX;
 
 public class PaymentListRecyclerAdapter extends RecyclerView.Adapter<PaymentListRecyclerAdapter.Viewholder> {
 
@@ -42,12 +38,15 @@ public class PaymentListRecyclerAdapter extends RecyclerView.Adapter<PaymentList
     public void onBindViewHolder(@NonNull Viewholder holder, int position) {
 
         PaymentInfo paymentInfo = paymentInfoList.get(position) ;
-        holder.txtBillName.setText(paymentInfo.getBillInfo().getBillName());
+//        holder.txtBillName.setText(paymentInfo.getBillInfoIndex().getBillName());
         holder.currentPosition = position ;
     }
 
     @Override
     public int getItemCount() {
+        if (paymentInfoList == null){
+            return 0 ;
+        }
         return paymentInfoList.size();
     }
 
@@ -64,7 +63,7 @@ public class PaymentListRecyclerAdapter extends RecyclerView.Adapter<PaymentList
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Snackbar.make(txtBillName, paymentInfoList.get(currentPosition).getBillInfo().getBillName(), Snackbar.LENGTH_SHORT).show();
+//                    Snackbar.make(txtBillName, paymentInfoList.get(currentPosition).getBillInfoIndex().getBillName(), Snackbar.LENGTH_SHORT).show();
                 }
             });
 

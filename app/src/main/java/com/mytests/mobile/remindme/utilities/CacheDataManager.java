@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mytests.mobile.remindme.model.BillInfo;
 import com.mytests.mobile.remindme.model.BillInfoList;
+import com.mytests.mobile.remindme.model.PaymentInfo;
+import com.mytests.mobile.remindme.model.PaymentInfoList;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +25,7 @@ public class CacheDataManager {
     }
 
     public static final String BILL_LIST_CACHE_FILENAME = "bill_list.json";
+    public static final String PAYMENT_LIST_CACHE_FILENAME = "payment_list.json";
 
     private CacheDataManager() {
         if(instance != null){
@@ -42,11 +45,6 @@ public class CacheDataManager {
         return instance;
     }
 
-    public void populateBillListCache(Context context) {
-
-        writeBillListCache(context, BillInfo.getDefaultTestBills());
-
-    }
 
     private void writeBillListCache(Context context, List<BillInfo> bills){
 
@@ -74,7 +72,14 @@ public class CacheDataManager {
 
     }
 
+    public void populateBillListCache(Context context) {
+
+        writeBillListCache(context, BillInfo.getDefaultTestBills());
+
+    }
+
     public void clearBillListCache(Context context) {
+        clearPaymentListCache(context);
         writeBillListCache(context, new ArrayList<BillInfo>());
     }
 
@@ -138,10 +143,129 @@ public class CacheDataManager {
 
     public int deleteBill(Context context, int position){
         BillInfoList billInfoList = readBillListCache(context);
+        PaymentInfoList paymentInfoList = readPaymentListCache(context) ;
+        boolean isBillReferedInPayments = false ;
+        if (paymentInfoList != null && paymentInfoList.getPayments() != null
+                && paymentInfoList.getPayments().size() > 0){
+            for(PaymentInfo paymentInfo: paymentInfoList.getPayments()){
+                if(paymentInfo.getBillInfoIndex() == position){
+                    isBillReferedInPayments = true ;
+                    break;
+                }
+            }
+        }
 
-        if(billInfoList.getBills().size() > position){
+        if(billInfoList.getBills().size() > position && !isBillReferedInPayments){
             billInfoList.getBills().remove(position);
             writeBillListCache(context, billInfoList.getBills());
+            return position;
+        } else {
+            return -1;
+        }
+
+    }
+
+    public PaymentInfoList readPaymentListCache(Context context) {
+
+        File cacheDirectory = context.getFilesDir();
+        File file = new File(cacheDirectory, PAYMENT_LIST_CACHE_FILENAME);
+
+        PaymentInfoList paymentInfoList = null;
+
+        if(file.exists()){
+
+            try {
+                paymentInfoList = mapper.readValue(file, PaymentInfoList.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if(paymentInfoList == null){
+            paymentInfoList = new PaymentInfoList();
+        }
+
+        if(paymentInfoList.getPayments() == null){
+            paymentInfoList.setPayments(new ArrayList<PaymentInfo>());
+        }
+
+        return paymentInfoList;
+
+    }
+
+    private void writePaymentListCache(Context context, List<PaymentInfo> payments){
+
+        File cacheDirectory = context.getFilesDir();
+        File file = new File(cacheDirectory, PAYMENT_LIST_CACHE_FILENAME);
+
+        if(!file.exists()){
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        PaymentInfoList paymentInfoList = new PaymentInfoList();
+        paymentInfoList.setPayments(payments);
+
+        if(file.exists()){
+            try {
+                mapper.writeValue(file, paymentInfoList);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    public void populatePaymentListCache(Context context) {
+
+        writePaymentListCache(context, PaymentInfo.getDefaultTestPayments(context));
+
+    }
+
+    public void clearPaymentListCache(Context context) {
+
+        writePaymentListCache(context, new ArrayList<PaymentInfo>());
+    }
+
+    public int addNewPayment(Context context){
+
+        return addNewPayment(context, new PaymentInfo());
+    }
+
+    public int addNewPayment(Context context, PaymentInfo paymentInfo){
+
+        PaymentInfoList paymentInfoList = readPaymentListCache(context);
+
+        paymentInfoList.getPayments().add(paymentInfo);
+
+        writePaymentListCache(context, paymentInfoList.getPayments());
+
+        return ( paymentInfoList.getPayments().size() - 1);
+    }
+
+    public int updatePayment(Context context, int position, PaymentInfo paymentInfo){
+
+        PaymentInfoList paymentInfoList = readPaymentListCache(context);
+
+        if(paymentInfoList.getPayments().size() > position){
+            paymentInfoList.getPayments().set(position, paymentInfo);
+            writePaymentListCache(context, paymentInfoList.getPayments());
+            return position;
+        } else {
+            return addNewBill(context, new BillInfo());
+        }
+
+    }
+
+    public int deletePayment(Context context, int position){
+        PaymentInfoList paymentInfoList = readPaymentListCache(context);
+
+        if(paymentInfoList.getPayments().size() > position){
+            paymentInfoList.getPayments().remove(position);
+            writePaymentListCache(context, paymentInfoList.getPayments());
             return position;
         } else {
             return -1;

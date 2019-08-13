@@ -163,14 +163,10 @@ public class BillInfo implements Parcelable {
 
     @Override
     public String toString() {
-        return "{" + billName +
-                " | " + (isActive() ?"Active" : "Not Active") +
-                "| since " + activeFrom +
-                "| " + (isAutoPay() ? "Autopay" : "Manual Payment") +
-                "| " + paymentFrequency +
-                "| " + tentativeDate +
-                "| " + notes +
-                '}';
+        return billName +
+                " | " + (isAutoPay() ? "Autopay" : "Manual Payment") +
+                " | " + paymentFrequency +
+                " | " + tentativeDate ;
     }
 
     public static List<BillInfo> getDefaultTestBills(){

@@ -196,7 +196,7 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_bill, menu);
+        getMenuInflater().inflate(R.menu.menu_bill_payment, menu);
         return true;
     }
 
