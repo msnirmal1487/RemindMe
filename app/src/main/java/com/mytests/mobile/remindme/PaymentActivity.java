@@ -12,9 +12,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.ToggleButton;
+
+import com.mytests.mobile.remindme.model.BillInfo;
+import com.mytests.mobile.remindme.utilities.CacheDataManager;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class PaymentActivity extends AppCompatActivity {
 
@@ -25,15 +32,30 @@ public class PaymentActivity extends AppCompatActivity {
     private int year;
     private int month;
     private int day;
+    private Spinner spinnerBills;
+    private EditText edttextPaymentNotes;
+    private EditText edttextBillAmount;
+    private ToggleButton toggleIsPaid;
+    private List<BillInfo> billInfos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this ;
         setContentView(R.layout.activity_payment);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        txtDateView = (TextView) findViewById(R.id.txt_paid_date);
+        spinnerBills = (Spinner) findViewById(R.id.spinner_bill);
+        edttextPaymentNotes = (EditText) findViewById(R.id.txt_notes);
+        txtDateView = (TextView) findViewById(R.id.txt_paid_date) ;
+        edttextBillAmount = (EditText) findViewById(R.id.txt_bill_amount);
+        toggleIsPaid = (ToggleButton) findViewById(R.id.toggle_is_paid);
+
+        billInfos = CacheDataManager.getInstance().getBillListFromCache(context);
+
+        BillListAdapter billListAdapter = new BillListAdapter(context, billInfos) ;
+        spinnerBills.setAdapter(billListAdapter);
 
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);

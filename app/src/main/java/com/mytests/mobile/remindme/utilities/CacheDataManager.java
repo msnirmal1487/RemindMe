@@ -83,6 +83,18 @@ public class CacheDataManager {
         writeBillListCache(context, new ArrayList<BillInfo>());
     }
 
+    public List<BillInfo> getBillListFromCache(Context context){
+
+        BillInfoList billInfoList = readBillListCache(context) ;
+
+        if (billInfoList != null
+                && billInfoList.getBills() != null
+                && billInfoList.getBills().size() > 0){
+            return billInfoList.getBills() ;
+        }
+        return null ;
+    }
+
     public BillInfoList readBillListCache(Context context) {
 
         File cacheDirectory = context.getFilesDir();
