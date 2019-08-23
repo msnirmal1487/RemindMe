@@ -43,7 +43,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static com.mytests.mobile.remindme.BillListActivity.NOTE_INFO_INDEX;
+import static com.mytests.mobile.remindme.MainActivity.BILL_INFO_INDEX;
+import static com.mytests.mobile.remindme.MainActivity.POSITION_NOT_SET;
 
 public class BillActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -54,7 +55,6 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
     public static final String BILL_INDEX = "com.mytests.mobile.remindme.BILL_INDEX" ;
     public static final String IS_CREATE_NEW = "com.mytests.mobile.remindme.IS_CREATE_NEW" ;
 
-    public static final int POSITION_NOT_SET = -1;
     public static final int EXTERNAL_FILE_WRITE_PERMISSION_REQUEST_CODE = 2;
     private EditText edittextBillName ;
     private EditText editTextNote ;
@@ -174,12 +174,11 @@ public class BillActivity extends AppCompatActivity implements View.OnClickListe
 
     private void readBillInfo() {
         Intent intent = this.getIntent();
-        index = intent.getIntExtra(NOTE_INFO_INDEX, POSITION_NOT_SET);
-
-        BillInfoList billInfoList = CacheDataManager.getInstance().readBillListCache(context) ;
-        List<BillInfo> bills = billInfoList.getBills();
+        index = intent.getIntExtra(BILL_INFO_INDEX, POSITION_NOT_SET);
 
         if (index > POSITION_NOT_SET){
+
+            List<BillInfo> bills = CacheDataManager.getInstance().getBillListFromCache(context);
 
             if (bills != null && bills.size() > index){
                 billInfo = bills.get(index);

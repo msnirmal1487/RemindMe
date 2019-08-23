@@ -25,9 +25,6 @@ import java.util.List;
 
 public class BillListActivity extends AppCompatActivity {
 
-    public static final String NOTE_INFO = "com.mytests.mobile.remindme.NOTE_INFO" ;
-    public static final String NOTE_INFO_INDEX = "com.mytests.mobile.remindme.NOTE_INFO_INDEX" ;
-
     private List<BillInfo> bills ;
     private Context context;
 //    private ArrayAdapter<BillInfo> adapterBills;
@@ -138,7 +135,7 @@ public class BillListActivity extends AppCompatActivity {
     private void onBillClicked(int position){
         Intent intent = new Intent(BillListActivity.this, BillActivity.class);
         if (bills != null && bills.size() > position){
-            intent.putExtra(NOTE_INFO_INDEX, position);
+            intent.putExtra(MainActivity.BILL_INFO_INDEX, position);
         }
         startActivity(intent);
     }

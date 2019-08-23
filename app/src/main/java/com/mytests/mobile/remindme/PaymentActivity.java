@@ -3,6 +3,7 @@ package com.mytests.mobile.remindme;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,13 +19,19 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.mytests.mobile.remindme.model.BillInfo;
+import com.mytests.mobile.remindme.model.PaymentInfo;
 import com.mytests.mobile.remindme.utilities.CacheDataManager;
 
 import java.util.Calendar;
 import java.util.List;
 
+import static com.mytests.mobile.remindme.MainActivity.PAYMENT_INFO_INDEX;
+import static com.mytests.mobile.remindme.MainActivity.POSITION_NOT_SET;
+
 public class PaymentActivity extends AppCompatActivity {
 
+    public static final String ORIGINAL_PAYMENT = "com.mytests.mobile.remindme.ORIGINAL_PAYMENT";
+    private static int index = -1 ;
     private boolean isCancelling = false;
     private Context context;
     private TextView txtDateView;
@@ -37,6 +44,9 @@ public class PaymentActivity extends AppCompatActivity {
     private EditText edttextBillAmount;
     private ToggleButton toggleIsPaid;
     private List<BillInfo> billInfos;
+    private PaymentInfo paymentInfo;
+    private boolean createNewPayment = false;
+    private PaymentInfo originalPaymentInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +62,6 @@ public class PaymentActivity extends AppCompatActivity {
         edttextBillAmount = (EditText) findViewById(R.id.txt_bill_amount);
         toggleIsPaid = (ToggleButton) findViewById(R.id.toggle_is_paid);
 
-        billInfos = CacheDataManager.getInstance().getBillListFromCache(context);
-
-        BillListAdapter billListAdapter = new BillListAdapter(context, billInfos) ;
-        spinnerBills.setAdapter(billListAdapter);
-
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
@@ -69,6 +74,58 @@ public class PaymentActivity extends AppCompatActivity {
                 setDate(view);
             }
         });
+
+        billInfos = CacheDataManager.getInstance().getBillListFromCache(context);
+
+        BillListAdapter billListAdapter = new BillListAdapter(context, billInfos) ;
+        spinnerBills.setAdapter(billListAdapter);
+
+        readPaymentInfo();
+        if (savedInstanceState == null){
+            saveOriginalPayment();
+        } else {
+            restoreOriginalPaymentInfo(savedInstanceState) ;
+        }
+
+        if (!createNewPayment){
+            populatePaymentDetails(paymentInfo) ;
+        }
+    }
+
+    private void populatePaymentDetails(PaymentInfo paymentInfo) {
+
+
+    }
+
+    private void restoreOriginalPaymentInfo(Bundle savedInstanceState) {
+        originalPaymentInfo = new PaymentInfo((PaymentInfo) savedInstanceState.getParcelable(ORIGINAL_PAYMENT));
+    }
+
+    private void saveOriginalPayment() {
+
+        if (createNewPayment){
+            return;
+        }
+        originalPaymentInfo = new PaymentInfo(paymentInfo);
+    }
+
+    private void readPaymentInfo() {
+
+        Intent intent = this.getIntent() ;
+        index = intent.getIntExtra(PAYMENT_INFO_INDEX, POSITION_NOT_SET) ;
+
+        if (index > POSITION_NOT_SET){
+            List<PaymentInfo> payments = CacheDataManager.getInstance().getPaymentListFromCache(context) ;
+            if (payments != null && payments.size() > index){
+                paymentInfo = payments.get(index);
+                createNewPayment = false;
+                return;
+            }
+        }
+
+        paymentInfo = new PaymentInfo();
+        index = CacheDataManager.getInstance().addNewPayment(context, paymentInfo) ;
+        createNewPayment = true ;
 
     }
 

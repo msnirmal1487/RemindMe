@@ -40,6 +40,10 @@ public class MainActivity extends AppCompatActivity
     public static final String PAYMENT_LIST = "PAYMENT_LIST";
     public static final String BILLS_LIST = "BILLS_LIST";
     public static final String INVALID = "INVALID";
+    public static final String BILL_INFO = "com.mytests.mobile.remindme.BILL_INFO" ;
+    public static final String BILL_INFO_INDEX = "com.mytests.mobile.remindme.BILL_INFO_INDEX" ;
+    public static final String PAYMENT_INFO_INDEX = "com.mytests.mobile.remindme.PAYMENT_INFO_INDEX" ;
+    public static final int POSITION_NOT_SET = -1;
     private List<BillInfo> bills ;
     private Context context;
     private RecyclerView listBills;

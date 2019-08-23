@@ -14,7 +14,7 @@ import com.mytests.mobile.remindme.model.BillInfo;
 
 import java.util.List;
 
-import static com.mytests.mobile.remindme.BillListActivity.NOTE_INFO_INDEX;
+import static com.mytests.mobile.remindme.MainActivity.BILL_INFO_INDEX;
 
 public class BillListRecyclerAdapter extends RecyclerView.Adapter<BillListRecyclerAdapter.Viewholder> {
 
@@ -68,7 +68,7 @@ public class BillListRecyclerAdapter extends RecyclerView.Adapter<BillListRecycl
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, BillActivity.class);
-                    intent.putExtra(NOTE_INFO_INDEX, currentPosition);
+                    intent.putExtra(BILL_INFO_INDEX, currentPosition);
                     context.startActivity(intent);
                 }
             });

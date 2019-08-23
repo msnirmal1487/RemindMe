@@ -1,6 +1,8 @@
 package com.mytests.mobile.remindme.model;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.mytests.mobile.remindme.utilities.CacheDataManager;
 import com.mytests.mobile.remindme.utilities.PaymentFrequency;
@@ -11,12 +13,67 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class PaymentInfo {
+public class PaymentInfo implements Parcelable {
 
     private int billInfoIndex;
     private boolean paid;
     private Date paidDate ;
     private float billAmount ;
+    private String paymentNotes ;
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(billInfoIndex);
+        parcel.writeByte((byte) (paid?1:0));
+        parcel.writeFloat(billAmount);
+        String paidDate = "" ;
+        if (getPaidDate() != null){
+            paidDate = new SimpleDateFormat("yyyyMMdd").format(getPaidDate()) ;
+        }
+
+        parcel.writeString(paidDate);
+        parcel.writeString(paymentNotes);
+    }
+
+    protected PaymentInfo(Parcel in) {
+        billInfoIndex = in.readInt();
+        paid = in.readByte() != 0;
+        billAmount = in.readFloat();
+        String paidDateString = in.readString() ;
+        try {
+            paidDate = new SimpleDateFormat("yyyyMMdd").parse(paidDateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            paidDate = null ;
+        }
+        paymentNotes = in.readString() ;
+    }
+
+    public static final Creator<PaymentInfo> CREATOR = new Creator<PaymentInfo>() {
+        @Override
+        public PaymentInfo createFromParcel(Parcel in) {
+            return new PaymentInfo(in);
+        }
+
+        @Override
+        public PaymentInfo[] newArray(int size) {
+            return new PaymentInfo[size];
+        }
+    };
+
+    public PaymentInfo(PaymentInfo paymentInfo) {
+        this.billInfoIndex = paymentInfo.billInfoIndex ;
+        this.paid = paymentInfo.paid ;
+        this.billAmount = paymentInfo.billAmount ;
+        this.paidDate = paymentInfo.paidDate ;
+        this.paymentNotes = paymentInfo.paymentNotes ;
+
+    }
 
     public int getBillInfoIndex() {
         return billInfoIndex;
@@ -50,6 +107,14 @@ public class PaymentInfo {
         this.billAmount = billAmount;
     }
 
+    public String getPaymentNotes() {
+        return paymentNotes;
+    }
+
+    public void setPaymentNotes(String paymentNotes) {
+        this.paymentNotes = paymentNotes;
+    }
+
     public PaymentInfo(int billInfoIndex, boolean paid) {
         this.billInfoIndex = billInfoIndex;
         this.paid = paid;
@@ -57,6 +122,8 @@ public class PaymentInfo {
 
     public PaymentInfo() {
     }
+
+
 
     public static List<PaymentInfo> getDefaultTestPayments(Context context){
 

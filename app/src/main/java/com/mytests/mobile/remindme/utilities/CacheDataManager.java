@@ -177,6 +177,18 @@ public class CacheDataManager {
 
     }
 
+    public List<PaymentInfo> getPaymentListFromCache(Context context){
+
+        PaymentInfoList paymentInfoList = readPaymentListCache(context) ;
+
+        if (paymentInfoList != null
+                && paymentInfoList.getPayments() != null
+                && paymentInfoList.getPayments().size() > 0){
+            return paymentInfoList.getPayments() ;
+        }
+        return null ;
+    }
+
     public PaymentInfoList readPaymentListCache(Context context) {
 
         File cacheDirectory = context.getFilesDir();
