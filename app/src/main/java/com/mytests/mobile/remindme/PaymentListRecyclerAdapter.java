@@ -1,6 +1,7 @@
 package com.mytests.mobile.remindme;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.mytests.mobile.remindme.model.PaymentInfo;
 
 import java.util.List;
+
+import static com.mytests.mobile.remindme.MainActivity.PAYMENT_INFO_INDEX;
 
 public class PaymentListRecyclerAdapter extends RecyclerView.Adapter<PaymentListRecyclerAdapter.Viewholder> {
 
@@ -63,7 +66,9 @@ public class PaymentListRecyclerAdapter extends RecyclerView.Adapter<PaymentList
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    Snackbar.make(txtBillName, paymentInfoList.get(currentPosition).getBillInfoIndex().getBillName(), Snackbar.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, PaymentActivity.class) ;
+                    intent.putExtra(PAYMENT_INFO_INDEX, currentPosition) ;
+                    context.startActivity(intent);
                 }
             });
 

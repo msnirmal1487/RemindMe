@@ -92,6 +92,9 @@ public class PaymentInfo implements Parcelable {
     }
 
     public Date getPaidDate() {
+        if (paidDate == null){
+            paidDate = new Date() ;
+        }
         return paidDate;
     }
 
@@ -121,6 +124,8 @@ public class PaymentInfo implements Parcelable {
     }
 
     public PaymentInfo() {
+        billInfoIndex = -1 ;
+        paidDate = new Date() ;
     }
 
 

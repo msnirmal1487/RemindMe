@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.PersistableBundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +22,14 @@ import android.widget.ToggleButton;
 
 import com.mytests.mobile.remindme.model.BillInfo;
 import com.mytests.mobile.remindme.model.PaymentInfo;
+import com.mytests.mobile.remindme.model.PaymentInfoList;
 import com.mytests.mobile.remindme.utilities.CacheDataManager;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import static com.mytests.mobile.remindme.MainActivity.PAYMENT_INFO_INDEX;
@@ -92,9 +99,29 @@ public class PaymentActivity extends AppCompatActivity {
         }
     }
 
-    private void populatePaymentDetails(PaymentInfo paymentInfo) {
+    private void populatePaymentDetails(final PaymentInfo paymentInfo) {
 
-
+        if (paymentInfo.getPaymentNotes() != null){
+            edttextPaymentNotes.setText(paymentInfo.getPaymentNotes());
+        }
+        if (paymentInfo.getPaidDate() != null){
+            Calendar calendar = new GregorianCalendar() ;
+            calendar.setTime(paymentInfo.getPaidDate());
+            showDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1 , calendar.get(Calendar.DAY_OF_MONTH));
+        }
+        List<BillInfo> bills = CacheDataManager.getInstance().getBillListFromCache(context) ;
+        if (paymentInfo.getBillInfoIndex() > -1 && bills.size() > paymentInfo.getBillInfoIndex()){
+            spinnerBills.post(new Runnable() {
+                @Override
+                public void run() {
+                    BillListAdapter billListAdapter = new BillListAdapter(context, billInfos) ;
+                    spinnerBills.setAdapter(billListAdapter);
+                    spinnerBills.setSelection(paymentInfo.getBillInfoIndex());
+                }
+            });
+        }
+        edttextBillAmount.setText(Float.toString( paymentInfo.getBillAmount()));
+        toggleIsPaid.setChecked(paymentInfo.isPaid());
     }
 
     private void restoreOriginalPaymentInfo(Bundle savedInstanceState) {
@@ -107,6 +134,49 @@ public class PaymentActivity extends AppCompatActivity {
             return;
         }
         originalPaymentInfo = new PaymentInfo(paymentInfo);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(ORIGINAL_PAYMENT, originalPaymentInfo);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isCancelling){
+            if(createNewPayment){
+                CacheDataManager.getInstance().deletePayment(context, index) ;
+            } else {
+                CacheDataManager.getInstance().updatePayment(context, index, originalPaymentInfo);
+            }
+        } else {
+            savePayment();
+        }
+    }
+
+    private void savePayment() {
+        paymentInfo.setBillInfoIndex(spinnerBills.getSelectedItemPosition());
+        if (edttextBillAmount.getText() != null){
+            paymentInfo.setBillAmount(Float.parseFloat(edttextBillAmount.getText().toString()) );
+        }
+        paymentInfo.setPaid(toggleIsPaid.isChecked());
+        Date date = new Date() ;
+        if (txtDateView.getText() != null){
+            try {
+                date = new SimpleDateFormat("yyyyMMdd").parse(txtDateView.getText().toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+                date = new Date() ;
+            }
+        }
+
+        paymentInfo.setPaidDate(date);
+        paymentInfo.setPaymentNotes(edttextPaymentNotes.getText().toString());
+
+        CacheDataManager.getInstance().updatePayment(context, index, paymentInfo) ;
     }
 
     private void readPaymentInfo() {
@@ -183,10 +253,24 @@ public class PaymentActivity extends AppCompatActivity {
             isCancelling = true;
             finish();
         } else if (id == R.id.action_next){
-//            moveNext();
+            moveNext();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void moveNext() {
+        savePayment();
+        ++index ;
+        List<PaymentInfo> paymentInfos = CacheDataManager.getInstance().getPaymentListFromCache(context) ;
+        if (paymentInfos != null && paymentInfos.size() > index){
+            paymentInfo = paymentInfos.get(index);
+            saveOriginalPayment();
+            populatePaymentDetails(paymentInfo);
+        } else {
+            --index ;
+        }
+        invalidateOptionsMenu();
     }
 
 }
