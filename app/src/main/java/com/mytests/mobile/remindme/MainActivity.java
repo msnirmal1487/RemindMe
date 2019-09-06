@@ -110,6 +110,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.action_read_bill_list_cache){
             readBillListCache();
             return true ;
+        } else if (id == R.id.action_settings){
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true ;
         }
 
         return super.onOptionsItemSelected(item);
