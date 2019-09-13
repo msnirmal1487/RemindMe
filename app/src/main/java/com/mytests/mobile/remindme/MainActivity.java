@@ -2,6 +2,7 @@ package com.mytests.mobile.remindme;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -25,11 +26,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.Menu;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +71,9 @@ public class MainActivity extends AppCompatActivity
                 onFabClicked();
             }
         });
+
+        PreferenceManager.setDefaultValues(context, R.xml.messages_preferences, false);
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -288,6 +294,8 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
+        updateNavHeader();
+
         String currentScreen = getCurrentVisibleScreen();
 
         if(PAYMENT_LIST.equalsIgnoreCase(currentScreen)){
@@ -297,5 +305,22 @@ public class MainActivity extends AppCompatActivity
             loadBillList();
             displayBillList();
         }
+    }
+
+    private void updateNavHeader() {
+        NavigationView navigationView = findViewById(R.id.nav_view) ;
+        View headerView = navigationView.getHeaderView(0) ;
+
+        TextView txtNavUserName = headerView.findViewById(R.id.nav_header_text) ;
+        TextView txtNavUseremail = headerView.findViewById(R.id.nav_header_subtext) ;
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context) ;
+        String userName = preferences.getString("pref_name", "Your Name") ;
+        String userEmail = preferences.getString("pref_email", "tourmaile@yourcompany.com") ;
+
+        txtNavUserName.setText(userName);
+        txtNavUseremail.setText(userEmail);
+
+
     }
 }

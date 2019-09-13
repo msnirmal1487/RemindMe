@@ -15,6 +15,7 @@ import java.util.List;
 
 public class BillInfo implements Parcelable {
 
+    private int billId ;
     private String billName ;
     private boolean active;
     private Date activeFrom ;
@@ -44,6 +45,7 @@ public class BillInfo implements Parcelable {
         paymentFrequency = PaymentFrequency.getPaymentFrequncy(parcel.readString());
         tentativeDate = parcel.readInt() ;
         notes = parcel.readString() ;
+        billId = parcel.readInt() ;
     }
 
     @Override
@@ -62,6 +64,7 @@ public class BillInfo implements Parcelable {
         parcel.writeString(paymentFrequency.getFrequency());
         parcel.writeInt(tentativeDate);
         parcel.writeString(notes);
+        parcel.writeInt(billId);
     }
 
     public final static Parcelable.Creator<BillInfo> CREATOR =
@@ -89,6 +92,7 @@ public class BillInfo implements Parcelable {
         this.paymentFrequency = billInfo.getPaymentFrequency();
         setTentativeDate(billInfo.getTentativeDate());
         this.notes = billInfo.getNotes();
+        this.billId = billInfo.billId ;
     }
 
     public BillInfo(String billName, boolean active, Date activeFrom, boolean autoPay,
@@ -100,6 +104,14 @@ public class BillInfo implements Parcelable {
         this.paymentFrequency = paymentFrequency;
         setTentativeDate(tentativeDate);
         this.notes = notes;
+    }
+
+    public int getBillId() {
+        return billId;
+    }
+
+    public void setBillId(int billId) {
+        this.billId = billId;
     }
 
     public String getBillName() {

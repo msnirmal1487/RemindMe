@@ -17,16 +17,21 @@
 <androidx.preference.PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <EditTextPreference
-        app:key="signature"
-        app:title="@string/signature_title"
+        app:key="pref_name"
+        app:title="@string/pref_name_title"
+        app:useSimpleSummaryProvider="true" />
+
+    <EditTextPreference
+        app:key="pref_email"
+        app:title="@string/pref_email_title"
         app:useSimpleSummaryProvider="true" />
 
     <ListPreference
-        app:defaultValue="reply"
-        app:entries="@array/reply_entries"
-        app:entryValues="@array/reply_values"
-        app:key="reply"
-        app:title="@string/reply_title"
+        app:defaultValue="@string/pref_default_launch_option"
+        app:entries="@array/pref_launch_option_entries"
+        app:entryValues="@array/pref_launch_option_values"
+        app:key="pref_launh_option"
+        app:title="@string/pref_launch_option_title"
         app:useSimpleSummaryProvider="true" />
 
 </androidx.preference.PreferenceScreen>

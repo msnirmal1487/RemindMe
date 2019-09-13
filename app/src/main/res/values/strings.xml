@@ -29,12 +29,13 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
+    <string name="messages_header">General</string>
     <string name="sync_header">Sync</string>
 
     <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
+    <string name="pref_name_title">Your Name</string>
+    <string name="pref_email_title">Your email</string>
+    <string name="pref_launch_option_title">Launch App on</string>
 
     <!-- Sync Preferences -->
     <string name="sync_title">Sync email periodically</string>
